@@ -1,0 +1,109 @@
+#include <iostream>
+#include <string>
+#include <map>
+
+using namespace std;
+
+class ATM {
+private:
+    map<string, pair<string, double > >accounts;
+
+public:
+    void createAccount() {
+        string userId, password;
+        cout << "Please enter your user ID: ";
+        cin >> userId;
+        cout << "Please enter your password: ";
+        cin >> password;
+        accounts[userId] = make_pair(password, 0.0);
+        cout << "Thank you! Your account has been created." << endl;
+    }
+
+    string login() {
+        string userId, password;
+        cout << "Please enter your user ID: ";
+        cin >> userId;
+        cout << "Please enter your password: ";
+        cin >> password;
+        if (accounts.find(userId) != accounts.end() && accounts[userId].first == password) {
+            cout << "Access granted!" << endl;
+            return userId;
+        } else {
+            cout << "Invalid user ID or password." << endl;
+            return "";
+        }
+    }
+
+    void deposit(string userId) {
+        double amount;
+        cout << "Amount of deposit: ";
+        cin >> amount;
+        accounts[userId].second += amount;
+        cout << "Deposit successful!" << endl;
+    }
+
+    void withdraw(string userId) {
+        double amount;
+        cout << "Amount of withdrawal: ";
+        cin >> amount;
+        if (accounts[userId].second >= amount) {
+            accounts[userId].second -= amount;
+            cout << "Withdrawal successful!" << endl;
+        } else {
+            cout << "Insufficient balance." << endl;
+        }
+    }
+
+    void requestBalance(string userId) {
+        cout << "Your balance is: " << accounts[userId].second << endl;
+    }
+
+    void run() {
+        while (true) {
+            cout << "Welcome to the ATM machine!" << endl;
+            cout << "Please select an option from the menu below:" << endl;
+            cout << "L - Login" << endl;
+            cout << "C - Create new account" << endl;
+            cout << "Q - Quit" << endl;
+            char option;
+            cin >> option;
+            if (option == 'L' || option == 'l') {
+                string userId = login();
+                if (!userId.empty()) {
+                    while (true) {
+                        cout << "Please select an option from the menu below:" << endl;
+                        cout << "D - Deposit money" << endl;
+                        cout << "W - Withdraw money" << endl;
+                        cout << "B - Request balance" << endl;
+                        cout << "Q - Quit" << endl;
+                        char option;
+                        cin >> option;
+                        if (option == 'D' || option == 'd') {
+                            deposit(userId);
+                        } else if (option == 'W' || option == 'w') {
+                            withdraw(userId);
+                        } else if (option == 'B' || option == 'b') {
+                            requestBalance(userId);
+                        } else if (option == 'Q' || option == 'q') {
+                            break;
+                        } else {
+                            cout << "Invalid option. Please try again." << endl;
+                        }
+                    }
+                }
+            } else if (option == 'C' || option == 'c') {
+                createAccount();
+            } else if (option == 'Q' || option == 'q') {
+                break;
+            } else {
+                cout << "Invalid option. Please try again." << endl;
+            }
+        }
+    }
+};
+
+int main() {
+    ATM atm;
+    atm.run();
+    return 0;
+}
